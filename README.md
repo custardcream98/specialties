@@ -1,70 +1,64 @@
-# Getting Started with Create React App
+# 🔮 Specialties
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+누구나 쉽게 블록체인을 이용해 커뮤니티를 만들 수 있는 서비스입니다. w3에 걸맞게 모든 커뮤니티는 각각 하나의 DAO로서 활동할 수 있도록 하는 tool을 제공하는 것이 궁극적인 목표입니다.
 
-## Available Scripts
+**Klaytn Blockchain**을 사용합니다.
 
-In the project directory, you can run:
+# 서비스 설명
 
-### `npm start`
+각 사용자는 모두 카이카스 지갑으로만 로그인 할 수 있으며, 재화는 오가지 않기 때문에 사용자 인증은 필요 없습니다.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+사용자는 커뮤니티 리더, 커뮤니티 코어 멤버, 혹은 커뮤니티 멤버로서 활동할 수 있습니다. 누구나 리더로서 활동할 수 있으며, 각 커뮤니티 리더는 처음 커뮤니티를 열 때 **특정 조건의 사람들만 모집할 수 있습니다.**
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 특정 조건이란
 
-### `npm test`
+1. 특정 NFT의 n개 이상 소지자
+2. 특정 토큰의 n개 이상 소지자
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+이같은 조건을 자유롭게 걸 수 있으며, 이외 모든 블록체인 외적인 조건은 가할 수 없습니다.
 
-### `npm run build`
+각 커뮤니티가 독자적인 DAO로서 활동하고 싶을 경우를 위해 직접 NFT를 민팅해서 모일 수 있는 옵션 또한 부여하고자 합니다.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 커뮤니티
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **커뮤니티 리더**: 처음 커뮤니티를 생성한 리더입니다. 리더는 커뮤니티의 구성 등을 변경할 수 있고, 커뮤니티 구성원들을 관리할 책임이 있습니다. 그러나, 아무리 리더라 하더라도 멤버들을 마음대로 할 수는 없습니다. 거의 모든 결정은 DAO에 의해서만 의결됩니다.
+- **커뮤니티 코어 멤버**: 리더가 직접 지정할 수 있습니다. 각 코어 멤버는 '구성원 관리'의 안건을 DAO 의제로 올릴 수 있는 권한이 주어집니다.
+- **커뮤니티 멤버**: 누구나 그 어떤 안건이든 DAO에 의제로 상정할 수 있으며, 누구나 동등한(여기에서 동등함이란, Portion에 따릅니다) 투표권(=ticket)을 가집니다. 심지어 '리더 혹은 코어 멤버의 탄핵' 또한 의결이 가능합니다.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## DAO 안건
 
-### `npm run eject`
+DAO 안건은 두가지 타입으로 나뉩니다.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. 커뮤니티 관리 관련 안건
+2. 커뮤니티 외적인 안건
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+이 중 1번 안건은 Specialties에서 Pre-built 안건으로 제공합니다.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 안건은 블록체인에 기록되나요?
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+이는 리더가 결정할 수 있게 할 방침입니다. 그러나, 리더는 이 경우 블록체인 이용 수수료를 부담해야 하므로, 이 옵션을 사용하지 않더라도 블록체인과 같은 효과를 누릴 수 있도록 **수정과 삭제가 불가능**하도록 할 예정입니다.
 
-## Learn More
+다만, 커뮤니티 리더는 커뮤니티 관리자로서 글의 삭제는 가능합니다.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+# Stack
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Frontend
 
-### Code Splitting
+`React.js` : 한국에서는 클레이튼 블록체인이 가장 활성화 돼있는데, `Klip` 지갑 관련 개발에는 기업체 인증 등의 과정이 필요해 Web Service로서 기획했습니다. 추후 발전한다면 모바일 중심적인 서비스의 개발도 할 예정입니다.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Backend
 
-### Analyzing the Bundle Size
+`Django` : 상황에 따라 `Spring`으로 바뀔 수 있습니다.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+# 개발 일정 계획
 
-### Making a Progressive Web App
+## ~ 7월
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- Frontend 가계발
+- Backend 가계발
+- MVP test
 
-### Advanced Configuration
+## ~ 8월
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- 추가 개발
+- MVP 완성
