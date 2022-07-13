@@ -5,7 +5,7 @@ import AppRouter from "components/Router";
 function App() {
   const [init, setInit] = useState(true);
   // react-reducer hooks
-  const isLoggedIn = useSelector((state) => state.userStatus.isLoggedIn);
+  const isLoggedIn = useSelector((state) => state.isUserLoggedIn);
 
   useEffect(() => {}, []);
   return (

@@ -1,1 +1,1 @@
-export const SET_USER_STATUS = "userStatus/SET_USER_STATUS";
+export const USER_LOGIN = "loggedReducer/USER_LOGIN";

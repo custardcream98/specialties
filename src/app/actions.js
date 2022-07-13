@@ -1,6 +1,5 @@
-import { SET_USER_STATUS } from "app/actionNames";
+import { USER_LOGIN } from "app/actionNames";
 
-export const setUserStatus = ({ account, token }) => ({
-  type: SET_USER_STATUS,
-  payload: { account, token },
+export const userLogin = () => ({
+  type: USER_LOGIN,
 });

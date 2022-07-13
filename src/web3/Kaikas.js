@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setUserStatus } from "app/actions";
+import { userLogin } from "app/actions";
+import "web3/session";
+import { ACCOUNT_ADDRESS, TOKEN } from "web3/session";
 
 const LogInKaikas = () => {
   const [publicAccount, setPublicAccount] = useState(null);
@@ -20,7 +22,7 @@ const LogInKaikas = () => {
   };
 
   const tryLogin = () =>
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/users/`, {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/users/checkuser/`, {
       body: JSON.stringify({ address: publicAccount }),
       headers: {
         "Content-Type": "application/json",
@@ -85,8 +87,30 @@ const LogInKaikas = () => {
     }).then((respone) => respone.json());
 
   const login = ({ token }) => {
-    dispatch(setUserStatus({ account: publicAccount, token }));
+    sessionStorage.setItem(TOKEN, token);
+    sessionStorage.setItem(ACCOUNT_ADDRESS, publicAccount);
+    dispatch(userLogin());
   };
+
+  const checkToken = (token) =>
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/users/checkpermission/`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${token}`,
+      },
+      method: "GET",
+    }).then((respone) => respone.json());
+
+  useEffect(() => {
+    if (sessionStorage.getItem(TOKEN)) {
+      checkToken(sessionStorage.getItem(TOKEN))
+        .then((response) => {
+          sessionStorage.setItem(TOKEN, response.token);
+          dispatch(userLogin());
+        })
+        .catch(console.log);
+    }
+  }, []);
 
   return <button onClick={onClick}>카이카스 로그인하기</button>;
 };
