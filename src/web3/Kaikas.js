@@ -5,20 +5,31 @@ import { userLogin } from "app/actions";
 import { ACCOUNT_ADDRESS, TOKEN } from "web3/session";
 
 const LogInKaikas = () => {
+  const [isKaikasAble, setIsKaikasAble] = useState(false);
   const [publicAccount, setPublicAccount] = useState(null);
   const dispatch = useDispatch();
 
   const onClick = async () => {
-    await loadAccountInfo();
+    const response = await tryLogin();
 
-    if (publicAccount) {
-      const response = await tryLogin();
+    if (response) {
+      login(response);
+      return;
+    } else console.log("Auth Failed");
+  };
 
-      if (response) {
-        login(response);
-        return;
-      } else console.log("Auth Failed");
+  const allowKaikas = async () => {
+    const { klaytn } = window;
+
+    try {
+      const accounts = await klaytn.enable();
+      setPublicAccount(accounts[0]);
+    } catch (error) {
+      console.log("User denied account access");
+      console.log(error);
     }
+
+    return;
   };
 
   const tryLogin = () =>
@@ -35,26 +46,6 @@ const LogInKaikas = () => {
       )
       .then(handleSignMessage)
       .then(handleAuthenticate);
-
-  const loadAccountInfo = async () => {
-    const { klaytn } = window;
-
-    if (klaytn) {
-      try {
-        await klaytn.enable();
-        setPublicAccount(klaytn.selectedAddress);
-      } catch (error) {
-        console.log("User denied account access");
-        console.log(error);
-      }
-    } else {
-      console.log(
-        "Non-Kaikas browser detected. You should consider trying Kaikas!"
-      );
-    }
-
-    return;
-  };
 
   const handleSignup = () =>
     axios
@@ -112,17 +103,59 @@ const LogInKaikas = () => {
       });
 
   useEffect(() => {
-    if (sessionStorage.getItem(TOKEN)) {
-      checkToken(sessionStorage.getItem(TOKEN))
-        .then((response) => {
-          sessionStorage.setItem(TOKEN, response.token);
-          dispatch(userLogin());
-        })
-        .catch(console.log);
+    if (typeof window.klaytn != "undefined") {
+      window.klaytn.on("accountsChaged", (accounts) => {
+        if (window.klaytn._kaikas.isEnabled()) setPublicAccount(accounts[0]);
+      });
+
+      if (window.klaytn.isKaikas) {
+        setIsKaikasAble(true);
+        if (window.klaytn._kaikas.isEnabled()) {
+          setPublicAccount(window.klaytn.selectedAddress);
+        }
+      }
     }
   }, []);
 
-  return <button onClick={onClick}>카이카스 로그인하기</button>;
+  useEffect(() => {
+    if (isKaikasAble && window.klaytn._kaikas.isEnabled()) {
+      setPublicAccount(window.klaytn.selectedAddress);
+    }
+  }, [isKaikasAble]);
+
+  useEffect(() => {
+    if (sessionStorage.getItem(TOKEN)) {
+      if (
+        sessionStorage.getItem(ACCOUNT_ADDRESS) ===
+        window.klaytn.selectedAddress
+      ) {
+        checkToken(sessionStorage.getItem(TOKEN))
+          .then((response) => {
+            sessionStorage.setItem(TOKEN, response.token);
+            dispatch(userLogin());
+          })
+          .catch(console.log);
+      } else {
+        sessionStorage.clear();
+      }
+    }
+  }, [publicAccount]);
+
+  return publicAccount ? (
+    <>
+      <p>
+        <span>카이카스가 활성화됐습니다! </span>
+        <br></br>
+        <span>활성화 된 지갑 주소 : {publicAccount}</span>
+        <br></br>
+      </p>
+      <button onClick={onClick}>카이카스 로그인하기</button>
+    </>
+  ) : (
+    <button onClick={allowKaikas} disabled={!isKaikasAble}>
+      카이카스 활성화
+    </button>
+  );
 };
 
 export default LogInKaikas;

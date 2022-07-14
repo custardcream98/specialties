@@ -17,7 +17,7 @@ function Home() {
         },
       })
       .then((result) => {
-        dispatch(setProfile(result.data.username, result.data.wallet_address));
+        dispatch(setProfile(result.data.nickname, result.data.wallet_address));
       })
       .catch(console.log);
   }, []);
