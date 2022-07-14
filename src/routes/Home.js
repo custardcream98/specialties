@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setProfile } from "app/actions";
@@ -8,21 +9,15 @@ function Home() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/users/`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Token ${sessionStorage.getItem(TOKEN)}`,
-      },
-      method: "GET",
-    })
-      .then((respone) => {
-        if (!respone.ok) {
-          throw new Error("Token Not Valid");
-        }
-        return respone.json();
+    axios
+      .get(`users/`, {
+        baseURL: process.env.REACT_APP_BACKEND_URL,
+        headers: {
+          Authorization: `Token ${sessionStorage.getItem(TOKEN)}`,
+        },
       })
       .then((result) => {
-        dispatch(setProfile(result.username, result.wallet_address));
+        dispatch(setProfile(result.data.username, result.data.wallet_address));
       })
       .catch(console.log);
   }, []);

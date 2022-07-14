@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { userLogin } from "app/actions";
@@ -21,15 +22,17 @@ const LogInKaikas = () => {
   };
 
   const tryLogin = () =>
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/users/checkuser/`, {
-      body: JSON.stringify({ address: publicAccount }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-    })
-      .then((response) => response.json())
-      .then((users) => (users.nonce !== 0 ? users : handleSignup()))
+    axios
+      .post(
+        `users/checkuser/`,
+        { address: publicAccount },
+        {
+          baseURL: process.env.REACT_APP_BACKEND_URL,
+        }
+      )
+      .then((respose) =>
+        respose.data.nonce !== 0 ? respose.data : handleSignup()
+      )
       .then(handleSignMessage)
       .then(handleAuthenticate);
 
@@ -54,13 +57,15 @@ const LogInKaikas = () => {
   };
 
   const handleSignup = () =>
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/users/signup/`, {
-      body: JSON.stringify({ address: publicAccount }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-    }).then((response) => response.json());
+    axios
+      .post(
+        `users/signup/`,
+        { address: publicAccount },
+        {
+          baseURL: process.env.REACT_APP_BACKEND_URL,
+        }
+      )
+      .then((response) => response.data);
 
   const handleSignMessage = ({ nonce }) => {
     const { sign } = window.caver.klay;
@@ -74,16 +79,18 @@ const LogInKaikas = () => {
   };
 
   const handleAuthenticate = ({ signature }) =>
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/users/auth/`, {
-      body: JSON.stringify({
-        address: publicAccount,
-        signature,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-    }).then((respone) => respone.json());
+    axios
+      .post(
+        `users/auth/`,
+        {
+          address: publicAccount,
+          signature,
+        },
+        {
+          baseURL: process.env.REACT_APP_BACKEND_URL,
+        }
+      )
+      .then((response) => response.data);
 
   const login = ({ token }) => {
     sessionStorage.setItem(TOKEN, token);
@@ -92,18 +99,17 @@ const LogInKaikas = () => {
   };
 
   const checkToken = (token) =>
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/users/checkpermission/`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Token ${token}`,
-      },
-      method: "GET",
-    }).then((respone) => {
-      if (!respone.ok) {
-        throw new Error("Token Not Valid");
-      }
-      return respone.json();
-    });
+    axios
+      .get(`users/checkpermission/`, {
+        baseURL: process.env.REACT_APP_BACKEND_URL,
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      })
+      .then((response) => response.data)
+      .catch((err) => {
+        throw new Error(`Token Not Valid ${err.response.status}`);
+      });
 
   useEffect(() => {
     if (sessionStorage.getItem(TOKEN)) {
