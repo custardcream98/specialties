@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { userLogin } from "app/actions";
-import "web3/session";
 import { ACCOUNT_ADDRESS, TOKEN } from "web3/session";
 
 const LogInKaikas = () => {
@@ -99,7 +98,12 @@ const LogInKaikas = () => {
         Authorization: `Token ${token}`,
       },
       method: "GET",
-    }).then((respone) => respone.json());
+    }).then((respone) => {
+      if (!respone.ok) {
+        throw new Error("Token Not Valid");
+      }
+      return respone.json();
+    });
 
   useEffect(() => {
     if (sessionStorage.getItem(TOKEN)) {
