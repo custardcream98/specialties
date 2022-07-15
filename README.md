@@ -4,6 +4,12 @@
 
 **Klaytn Blockchain**을 사용합니다.
 
+![로그인](./img/specialties_login.gif)
+
+**현재까지 구현한 web3 로그인 기능입니다**
+
+Backend에서 signed message decode를 통한 auth까지 구현이 돼있습니다.
+
 # 서비스 설명
 
 각 사용자는 모두 카이카스 지갑으로만 로그인 할 수 있으며, 재화는 오가지 않기 때문에 사용자 인증은 필요 없습니다.
