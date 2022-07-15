@@ -5,8 +5,9 @@ import { userLogin } from "app/actions";
 import { ACCOUNT_ADDRESS, TOKEN } from "web3/session";
 
 const LogInKaikas = () => {
-  const [isKaikasAble, setIsKaikasAble] = useState(false);
-  const [publicAccount, setPublicAccount] = useState(null);
+  const [isKaikasAble, setIsKaikasAble] = useState(false); // 카이카스가 제대로 설치돼 있는지 여부
+  const [publicAccount, setPublicAccount] = useState(null); // 카이카스 접근 권한을 승인받아 주소 저장 (승인 여부 확인용으로도 사용)
+  const [initiated, setInitiated] = useState(false);
   const dispatch = useDispatch();
 
   const onClick = async () => {
@@ -81,7 +82,11 @@ const LogInKaikas = () => {
           baseURL: process.env.REACT_APP_BACKEND_URL,
         }
       )
-      .then((response) => response.data);
+      .then((response) => {
+        if (response.status === 200) {
+          return response.data;
+        }
+      });
 
   const login = ({ token }) => {
     sessionStorage.setItem(TOKEN, token);
@@ -104,31 +109,23 @@ const LogInKaikas = () => {
 
   useEffect(() => {
     if (typeof window.klaytn != "undefined") {
-      window.klaytn.on("accountsChaged", (accounts) => {
-        if (window.klaytn._kaikas.isEnabled()) setPublicAccount(accounts[0]);
-      });
-
       if (window.klaytn.isKaikas) {
         setIsKaikasAble(true);
-        if (window.klaytn._kaikas.isEnabled()) {
-          setPublicAccount(window.klaytn.selectedAddress);
-        }
       }
     }
   }, []);
 
   useEffect(() => {
+    console.log(isKaikasAble);
+
     if (isKaikasAble && window.klaytn._kaikas.isEnabled()) {
       setPublicAccount(window.klaytn.selectedAddress);
     }
   }, [isKaikasAble]);
 
   useEffect(() => {
-    if (sessionStorage.getItem(TOKEN)) {
-      if (
-        sessionStorage.getItem(ACCOUNT_ADDRESS) ===
-        window.klaytn.selectedAddress
-      ) {
+    if (sessionStorage.getItem(TOKEN) && publicAccount) {
+      if (sessionStorage.getItem(ACCOUNT_ADDRESS) === publicAccount) {
         checkToken(sessionStorage.getItem(TOKEN))
           .then((response) => {
             sessionStorage.setItem(TOKEN, response.token);

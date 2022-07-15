@@ -62,3 +62,9 @@ DAO 안건은 두가지 타입으로 나뉩니다.
 
 - 추가 개발
 - MVP 완성
+
+# TIL
+
+## useState is Asynchronous
+
+`useState`는 비동기로 작동됩니다. 따라서, state를 변경했을 때 변경된 state를 이용한 logic이 필요하다면 `useEffect`에서 callback Function을 정의해줘야 합니다. (`setState` 자체가 `Promise` 형식을 리턴하지 않습니다)
