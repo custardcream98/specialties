@@ -74,3 +74,23 @@ DAO 안건은 두가지 타입으로 나뉩니다.
 ## useState is Asynchronous
 
 `useState`는 비동기로 작동됩니다. 따라서, state를 변경했을 때 변경된 state를 이용한 logic이 필요하다면 `useEffect`에서 callback Function을 정의해줘야 합니다. (`setState` 자체가 `Promise` 형식을 리턴하지 않습니다)
+
+## Web3 기반의 로그인 Full Stack 구현하기
+
+블록체인 관련 개발은 Node.js를 이용해 NFT를 민팅해보거나, NFT 관련 정보 조회가 가능한 디스코드 봇을 개발해본 경험이 전부였는데, Full Stack으로 Web3 Auth를 구현해보는 과정이 정말 재밌었어요😁
+
+### 인증 Flow
+
+전체적으로 Backend에서 무작위로 생성된 Nonce를 Client의 블록체인 지갑으로 서명하면, 이 서명된 메세지를 다시 Backend에서 검증하는 흐름입니다.
+
+1. Front-end에서 Kaikas 지갑 유무 확인 후 '카이카스 지갑 활성화' 버튼 활성화
+   지갑으로 서명을 하려면 우선 사용자의 지갑에 서비스를 연결해야 합니다.
+2. Kaikas 지갑 활성화 확인 후 '로그인 하기' 버튼 활성화
+3. (로그인 요청이 오면) Back-end에서 무작위로 Nonce 생성
+4. Kaikas 지갑으로 Nonce와 약간의 안내 문구로 구성된 message를 Web3.js sign후 Backend로 인증 요청
+5. 서명된 message를 web3 package 활용해 Validation 검사
+   - 앞서 생성된 Nonce와 서명된 message를 이용해 사용자의 지갑 주소를 복구할 수 있어 이렇게 복구된 지갑 주소가 사용자의 지갑 주소가 맞는지 확인합니다.
+   - web3 모듈은 Ethereum 기준으로 개발된 모듈로, Klaytn Blockchain에 맞게 아주 약간의 수정이 필요했습니다.
+6. Validation을 통과하면 User를 생성하고 로그인 토큰을 생성(Django Rest Framework에서 제공하는 authtoken 활용)해 Client로 전송
+   - 추후 다시 Validation이 필요할 때(재로그인 등)를 대비해 사용자의 Nonce를 재발급합니다. Nonce는 각 User에 저장됩니다.
+7. 로그인!
